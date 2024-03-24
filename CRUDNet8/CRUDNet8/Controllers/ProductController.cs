@@ -5,13 +5,13 @@ namespace CRUDNet8.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController : ControllerBase
+    public class ProductController(IProductRepository productRepository) : ControllerBase
     {
-        private readonly IProductRepository productRepository;
-        public ProductController(IProductRepository productRepository)
-        {
-            this.productRepository = productRepository;
-        }
+        //private readonly IProductRepository productRepository;
+        //public ProductController(IProductRepository productRepository)
+        //{
+        //    this.productRepository = productRepository;
+        //}
 
         [HttpGet("All-Products")]
         public async Task<ActionResult<List<Product>>> GetAllProductAsync()

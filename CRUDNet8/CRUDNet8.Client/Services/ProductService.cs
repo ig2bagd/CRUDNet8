@@ -3,13 +3,13 @@ using SharedLibrary.ProductRepositories;
 using System.Net.Http.Json;
 namespace CRUDNet8.Client.Services
 {
-    public class ProductService : IProductRepository
+    public class ProductService(HttpClient httpClient) : IProductRepository
     {
-        private readonly HttpClient httpClient;
-        public ProductService(HttpClient httpClient)
-        {
-            this.httpClient = httpClient;
-        }
+        //private readonly HttpClient httpClient;
+        //public ProductService(HttpClient httpClient)
+        //{
+        //    this.httpClient = httpClient;
+        //}
         public async Task<Product> AddProductAsync(Product model)
         {
             var product = await httpClient.PostAsJsonAsync("api/Product/Add-Product", model);
