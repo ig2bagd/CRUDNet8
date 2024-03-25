@@ -1,5 +1,10 @@
 ﻿@page "/product-list"
 @rendermode InteractiveAuto
+@* @rendermode @(new InteractiveAutoRenderMode(false)) *@
+@* @rendermode InteractiveWebAssembly *@
+@* @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false)) *@
+
+@* @inject IProductApi ProductClient *@
 
 <div class="container">
     <div class="row">
@@ -10,7 +15,8 @@
                 </div>
                 @if (Products.Count > 0)
                 {
-                    <div class="card-header">Product List
+                    <div class="card-header">
+                        Product List
                     </div>
                     <div class="card-body">
                         <table class="table table-striped">
@@ -57,6 +63,8 @@
     private async Task LoadProducts()
     {
         var products = await ProductService.GetAllProductsAsync();
+        // var products = await ProductClient.GetAllProductsAsync();
+
         Products?.Clear();
         if (Products is null) return;
         foreach (var product in products)
@@ -81,6 +89,7 @@
     private async Task Delete(int id)
     {
         var product = await ProductService.DeleteProductAsync(id);
+        // var product = await ProductClient.DeleteProductAsync(id);
         await LoadProducts();
     }
 }

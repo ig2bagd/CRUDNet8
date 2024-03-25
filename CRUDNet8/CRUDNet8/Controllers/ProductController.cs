@@ -21,28 +21,28 @@ namespace CRUDNet8.Controllers
         } 
         
         [HttpGet("Single-Product/{id}")]
-        public async Task<ActionResult<List<Product>>> GetSingleProductAsync(int id)
+        public async Task<ActionResult<Product>> GetSingleProductAsync(int id)
         {
             var product = await productRepository.GetProductByIdAsync(id);
             return Ok(product);
         }
 
         [HttpPost("Add-Product")]
-        public async Task<ActionResult<List<Product>>> AddProductAsync(Product model)
+        public async Task<ActionResult<Product>> AddProductAsync(Product model)
         {
             var product = await productRepository.AddProductAsync(model);
             return Ok(product);
         }
 
         [HttpPut("Update-Product")]
-        public async Task<ActionResult<List<Product>>> UpdateProductAsync(Product model)
+        public async Task<ActionResult<Product>> UpdateProductAsync(Product model)
         {
             var product = await productRepository.UpdateProductAsync(model);
             return Ok(product);
         }
 
         [HttpDelete("Delete-Product/{id}")]
-        public async Task<ActionResult<List<Product>>> DeleteProductAsync(int id)
+        public async Task<ActionResult<Product>> DeleteProductAsync(int id)
         {
             var product = await productRepository.DeleteProductAsync(id);
             return Ok(product);

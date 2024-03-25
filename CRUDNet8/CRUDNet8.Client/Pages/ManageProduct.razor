@@ -1,6 +1,12 @@
 ﻿@page "/manage-product"
 @page "/manage-product/{Id:int}"
 @rendermode InteractiveAuto
+@* @rendermode @(new InteractiveAutoRenderMode(false)) *@
+@* @rendermode InteractiveWebAssembly *@
+@* @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false)) *@
+
+@* @inject IProductApi ProductClient *@
+
 <div class="container">
     <div class="row">
         <div class="col-md-8">
@@ -48,12 +54,14 @@
         if (ProductModel.Id > 0)
         {
             ReturnProduct = await ProductService.UpdateProductAsync(ProductModel);
+            // ReturnProduct = await ProductClient.UpdateProductAsync(ProductModel);
             ProductModel = new();
         }
 
         else
         {
             ReturnProduct = await ProductService.AddProductAsync(ProductModel);
+            // ReturnProduct = await ProductClient.AddProductAsync(ProductModel);
             ProductModel = new();
 
         }

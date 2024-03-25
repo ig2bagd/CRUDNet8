@@ -5,13 +5,13 @@ using SharedLibrary.ProductRepositories;
 
 namespace CRUDNet8.Implementations
 {
-    public class ProductRepository : IProductRepository
+    public class ProductRepository(AppDbContext appDbContext) : IProductRepository
     {
-        private readonly AppDbContext appDbContext;
-        public ProductRepository(AppDbContext appDbContext)
-        {
-            this.appDbContext = appDbContext;
-        }
+        //private readonly AppDbContext appDbContext;
+        //public ProductRepository(AppDbContext appDbContext)
+        //{
+        //    this.appDbContext = appDbContext;
+        //}
 
         public async Task<Product> AddProductAsync(Product model)
         {
@@ -24,9 +24,19 @@ namespace CRUDNet8.Implementations
             return newDataAdded;
         }
 
+        public async Task<Product> UpdateProductAsync(Product model)
+        {
+            var product = await appDbContext.Products.FirstOrDefaultAsync(_ => _.Id == model.Id);
+            if (product is null) return null!;
+            product.Name = model.Name;
+            product.Quantity = model.Quantity;
+            await appDbContext.SaveChangesAsync();
+            return await appDbContext.Products.FirstOrDefaultAsync(_ => _.Id == model.Id) ?? new Product();
+        }
+
         public async Task<Product> DeleteProductAsync(int productId)
         {
-            var product = await appDbContext.Products.FirstOrDefaultAsync(_=>_.Id == productId);
+            var product = await appDbContext.Products.FirstOrDefaultAsync(_ => _.Id == productId);
             if (product is null) return null!;
             appDbContext.Products.Remove(product);
             await appDbContext.SaveChangesAsync();
@@ -40,16 +50,6 @@ namespace CRUDNet8.Implementations
             var product = await appDbContext.Products.FirstOrDefaultAsync(_ => _.Id == productId);
             if (product is null) return null!;
             return product;
-        }
-
-        public async Task<Product> UpdateProductAsync(Product model)
-        {
-            var product = await appDbContext.Products.FirstOrDefaultAsync(_ => _.Id == model.Id);
-            if (product is null) return null!;
-            product.Name = model.Name;
-            product.Quantity = model.Quantity;
-            await appDbContext.SaveChangesAsync();
-            return await appDbContext.Products.FirstOrDefaultAsync(_ => _.Id == model.Id)!;
         }
     }
 }
