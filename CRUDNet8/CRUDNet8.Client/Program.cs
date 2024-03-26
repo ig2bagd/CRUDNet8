@@ -15,7 +15,8 @@ builder.Services.AddScoped<IProductRepository, ProductService>();
 
 builder.Services
     .AddRefitClient<IProductApi>()
-    .ConfigureHttpClient(c => c.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/Product"));
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}"));                       // Minimal APIs
+    //.ConfigureHttpClient(c => c.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/Product"));          // API controller
     //.ConfigureHttpClient(c => { c.BaseAddress = new Uri("https://localhost:7012/api/Product"); });
 
 await builder.Build().RunAsync();

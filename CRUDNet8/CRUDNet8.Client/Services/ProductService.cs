@@ -3,13 +3,13 @@ using SharedLibrary.ProductRepositories;
 
 namespace CRUDNet8.Client.Services;
 
-public class ProductService : IProductRepository
+public class ProductService(IProductApi ProductClient) : IProductRepository
 {
-    private readonly IProductApi ProductClient;
-    public ProductService(IProductApi ProductClient)
-    {
-        this.ProductClient = ProductClient;
-    }
+    //private readonly IProductApi ProductClient;
+    //public ProductService(IProductApi ProductClient)
+    //{
+    //    this.ProductClient = ProductClient;
+    //}
     public async Task<Product> AddProductAsync(Product model)
     {
         return await ProductClient.AddProductAsync(model);

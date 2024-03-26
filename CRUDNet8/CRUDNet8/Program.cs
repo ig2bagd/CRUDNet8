@@ -3,6 +3,7 @@ using CRUDNet8.Components;
 using CRUDNet8.Data;
 using CRUDNet8.Implementations;
 using Microsoft.EntityFrameworkCore;
+using SharedLibrary.Models;
 using SharedLibrary.ProductRepositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,17 +14,18 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 
-builder.Services.AddControllers();
+//builder.Services.AddControllers();    
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Wooo! Connection is not found"));
 });
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
-builder.Services.AddScoped(http => new HttpClient
-{
-    BaseAddress = new Uri(builder.Configuration.GetSection("BaseAddress").Value!)
-});
+// Not using & no need to register HttpClient on the server
+//builder.Services.AddScoped(http => new HttpClient
+//{
+//    BaseAddress = new Uri(builder.Configuration.GetSection("BaseAddress").Value!)
+//});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -39,7 +41,7 @@ else
 }
 
 app.UseHttpsRedirection();
-app.MapControllers();
+//app.MapControllers();                 //Only needed for API controllers
 app.UseStaticFiles();
 app.UseAntiforgery();
 
@@ -47,5 +49,37 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(Counter).Assembly);
+
+// Minimal APIs
+app.MapGet("/All-Products", async (IProductRepository productRepository) =>
+{
+    var products = await productRepository.GetAllProductsAsync();
+    //return TypedResults.Ok(products);
+    return Results.Ok(products);
+});
+
+app.MapGet("/Single-Product/{id}", async (IProductRepository productRepository, int id) =>
+{
+    var product = await productRepository.GetProductByIdAsync(id);
+    return TypedResults.Ok(product);
+});
+
+app.MapPost("/Add-Product", async (IProductRepository productRepository, Product model) =>
+{
+    var product = await productRepository.AddProductAsync(model);
+    return TypedResults.Ok(product);
+});
+
+app.MapPut("/Update-Product", async (IProductRepository productRepository, Product model) =>
+{
+    var product = await productRepository.UpdateProductAsync(model);
+    return TypedResults.Ok(product);
+});
+
+app.MapDelete("/Delete-Product/{id}", async (IProductRepository productRepository, int id) =>
+{
+    var product = await productRepository.DeleteProductAsync(id);
+    return TypedResults.Ok(product);
+});
 
 app.Run();
