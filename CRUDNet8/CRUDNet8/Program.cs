@@ -1,5 +1,6 @@
 using CRUDNet8.Client.Pages;
 using CRUDNet8.Components;
+using CRUDNet8.Controllers;
 using CRUDNet8.Data;
 using CRUDNet8.Implementations;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +43,7 @@ else
 
 app.UseHttpsRedirection();
 //app.MapControllers();                 //Only needed for API controllers
+app.MapProductEndpoints();              //Minimal APIs
 app.UseStaticFiles();
 app.UseAntiforgery();
 
@@ -49,37 +51,5 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(Counter).Assembly);
-
-// Minimal APIs
-app.MapGet("/All-Products", async (IProductRepository productRepository) =>
-{
-    var products = await productRepository.GetAllProductsAsync();
-    //return TypedResults.Ok(products);
-    return Results.Ok(products);
-});
-
-app.MapGet("/Single-Product/{id}", async (IProductRepository productRepository, int id) =>
-{
-    var product = await productRepository.GetProductByIdAsync(id);
-    return TypedResults.Ok(product);
-});
-
-app.MapPost("/Add-Product", async (IProductRepository productRepository, Product model) =>
-{
-    var product = await productRepository.AddProductAsync(model);
-    return TypedResults.Ok(product);
-});
-
-app.MapPut("/Update-Product", async (IProductRepository productRepository, Product model) =>
-{
-    var product = await productRepository.UpdateProductAsync(model);
-    return TypedResults.Ok(product);
-});
-
-app.MapDelete("/Delete-Product/{id}", async (IProductRepository productRepository, int id) =>
-{
-    var product = await productRepository.DeleteProductAsync(id);
-    return TypedResults.Ok(product);
-});
 
 app.Run();
