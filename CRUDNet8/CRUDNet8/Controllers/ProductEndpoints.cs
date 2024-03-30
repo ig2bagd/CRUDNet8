@@ -4,8 +4,10 @@ using SharedLibrary.ProductRepositories;
 namespace CRUDNet8.Controllers;
 
 // https://www.youtube.com/watch?v=gsAuFIhXz3g
+// https://www.youtube.com/watch?v=EXqM-9nMIrk
 public static class ProductEndpoints
 {
+    //public static IEndpointConventionBuilder MapProductEndpoints(this IEndpointRouteBuilder app)
     public static void MapProductEndpoints(this IEndpointRouteBuilder app)
     {
         /*
