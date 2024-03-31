@@ -1,6 +1,5 @@
-﻿using SharedLibrary.Models;
-using SharedLibrary.ProductRepositories;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
+
 namespace CRUDNet8.Client.Services
 {
     public class ProductService_Http(HttpClient httpClient) : IProductRepository

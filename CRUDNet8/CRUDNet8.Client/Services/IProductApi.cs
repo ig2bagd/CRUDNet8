@@ -1,5 +1,4 @@
 ﻿using Refit;
-using SharedLibrary.Models;
 
 namespace CRUDNet8.Client.Services;
 

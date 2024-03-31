@@ -1,7 +1,4 @@
-﻿using SharedLibrary.Models;
-using SharedLibrary.ProductRepositories;
-
-namespace CRUDNet8.Client.Services;
+﻿namespace CRUDNet8.Client.Services;
 
 public class ProductService(IProductApi ProductClient) : IProductRepository
 {
