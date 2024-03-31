@@ -6,6 +6,13 @@
 
 @* @inject IProductApi ProductClient *@
 
+@* https://www.telerik.com/blogs/fetching-sharing-data-between-components-blazor-auto-render-mode *@
+@* https://learn.microsoft.com/en-us/aspnet/core/blazor/components/prerender?view=aspnetcore-8.0#persist-prerendered-state *@
+@* https://jonhilton.net/persist-state-between-renders-net8/ *@
+@implements IDisposable
+@inject ILogger<ProductList> Logger
+@inject PersistentComponentState ApplicationState
+
 <div class="container">
     <div class="row">
         <div class="col-md-8">
@@ -13,66 +20,94 @@
                 <div class="card">
                     <div class="card-header"> <button class="btn btn-primary float-end" @onclick="NavigateToAddProductPage"> Add Product </button></div>
                 </div>
-                @if (Products.Count > 0)
-                {
-                    <div class="card-header">
-                        Product List
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Product Id</th>
-                                    <th>Product Name</th>
-                                    <th>Product Quantity</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var product in Products)
-                                {
-                                    <tr>
-                                        <td>@product.Id</td>
-                                        <td>@product.Name</td>
-                                        <td>@product.Quantity</td>
-                                        <td>
-                                            <div class="hstack gap-2">
-                                                <button class="btn  btn-info" @onclick="()=>Edit(product)"> Edit</button>
-                                                <button class="btn  btn-danger" @onclick="() => Delete(product.Id)"> Delete</button>
 
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
+                @if (Products == null)
+                {
+                    <p><em>Loading...</em></p>
                 }
                 else
                 {
-                    <div class="alert alert-info"> No Product Available </div>
+                    @if (Products.Count > 0)
+                    {
+                        <div class="card-header">
+                            Product List
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Product Id</th>
+                                        <th>Product Name</th>
+                                        <th>Product Quantity</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var product in Products)
+                                    {
+                                        <tr>
+                                            <td>@product.Id</td>
+                                            <td>@product.Name</td>
+                                            <td>@product.Quantity</td>
+                                            <td>
+                                                <div class="hstack gap-2">
+                                                    <button class="btn  btn-info" @onclick="()=>Edit(product)"> Edit</button>
+                                                    <button class="btn  btn-danger" @onclick="() => Delete(product.Id)"> Delete</button>
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info"> No Product Available </div>
+                    }
                 }
+
             </div>
         </div>
     </div>
 </div>
 
 @code {
-    private List<Product> Products { get; set; } = new();
+    private PersistingComponentStateSubscription subscription;
+    // private List<Product> Products { get; set; } = new();
+    private List<Product>? Products { get; set; }
 
     private async Task LoadProducts()
     {
-        var products = await ProductService.GetAllProductsAsync();
+        /*
+        var products = await ProductRepo.GetAllProductsAsync();
         // var products = await ProductClient.GetAllProductsAsync();
 
         Products?.Clear();
         if (Products is null) return;
         foreach (var product in products)
             Products.Add(product);
+        */
+
+        var foundInState = ApplicationState.TryTakeFromJson<List<Product>>(nameof(Products), out var restoredProducts);
+
+        if (foundInState)
+        {
+            Products = restoredProducts;
+            Logger.LogInformation("Products restored from state");
+        }
+        else
+        {
+            Products = await ProductRepo.GetAllProductsAsync();
+            Logger.LogInformation("Products retrieved from DB");
+        }
     }
 
     protected override async Task OnInitializedAsync()
     {
+        subscription = ApplicationState.RegisterOnPersisting(Persist);
+
         await LoadProducts();
     }
 
@@ -88,8 +123,19 @@
 
     private async Task Delete(int id)
     {
-        var product = await ProductService.DeleteProductAsync(id);
+        var product = await ProductRepo.DeleteProductAsync(id);
         // var product = await ProductClient.DeleteProductAsync(id);
         await LoadProducts();
+    }
+
+    private Task Persist()
+    {
+        ApplicationState.PersistAsJson(nameof(Products), Products);
+        return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        subscription.Dispose();
     }
 }

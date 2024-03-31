@@ -17,10 +17,7 @@ public class ProductService(IProductApi ProductClient) : IProductRepository
         return await ProductClient.DeleteProductAsync(productId);
     }
 
-    public async Task<List<Product>> GetAllProductsAsync()
-    {
-        return await ProductClient.GetAllProductsAsync();
-    }
+    public async Task<List<Product>> GetAllProductsAsync() => await ProductClient.GetAllProductsAsync();
 
     public async Task<Product> GetProductByIdAsync(int productId)
     {
