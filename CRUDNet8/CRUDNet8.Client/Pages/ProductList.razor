@@ -1,4 +1,5 @@
 ﻿@page "/product-list"
+
 @rendermode InteractiveAuto
 @* @rendermode @(new InteractiveAutoRenderMode(false)) *@
 @* @rendermode InteractiveWebAssembly *@
@@ -9,6 +10,8 @@
 @* https://www.telerik.com/blogs/fetching-sharing-data-between-components-blazor-auto-render-mode *@
 @* https://learn.microsoft.com/en-us/aspnet/core/blazor/components/prerender?view=aspnetcore-8.0#persist-prerendered-state *@
 @* https://jonhilton.net/persist-state-between-renders-net8/ *@
+
+@* @inherits BasePage *@
 @implements IDisposable
 @inject ILogger<ProductList> Logger
 @inject PersistentComponentState ApplicationState
@@ -80,7 +83,6 @@
 
     private async Task LoadProducts()
     {
-        /*
         var products = await ProductRepo.GetAllProductsAsync();
         // var products = await ProductClient.GetAllProductsAsync();
 
@@ -88,7 +90,14 @@
         if (Products is null) return;
         foreach (var product in products)
             Products.Add(product);
-        */
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        /* await LoadProducts(); */
+
+
+        subscription = ApplicationState.RegisterOnPersisting(Persist);
 
         var foundInState = ApplicationState.TryTakeFromJson<List<Product>>(nameof(Products), out var restoredProducts);
 
@@ -102,13 +111,13 @@
             Products = await ProductRepo.GetAllProductsAsync();
             Logger.LogInformation("Products retrieved from DB");
         }
-    }
 
-    protected override async Task OnInitializedAsync()
-    {
-        subscription = ApplicationState.RegisterOnPersisting(Persist);
-
-        await LoadProducts();
+        /*
+        Products = await GetOrAddState(nameof(Products), async () =>
+        {
+            return await ProductRepo.GetAllProductsAsync();
+        });
+        */
     }
 
     private void NavigateToAddProductPage()
