@@ -32,6 +32,9 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 //{
 //    BaseAddress = new Uri(builder.Configuration.GetSection("BaseAddress").Value!)
 //});
+
+builder.Services.AddProblemDetails();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

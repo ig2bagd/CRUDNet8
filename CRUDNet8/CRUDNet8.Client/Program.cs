@@ -1,3 +1,4 @@
+using CRUDNet8.Client.DelegatingHandlers;
 using CRUDNet8.Client.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Http.Resilience;
@@ -15,11 +16,14 @@ builder.Services.AddScoped<IProductRepository, ProductService>();
 
 //Console.WriteLine($"builder.HostEnvironment.BaseAddress: {builder.HostEnvironment.BaseAddress}");        // "https://localhost:7012/"
 
+builder.Services.AddTransient<LoggingHandler>();
+
 builder.Services
     .AddRefitClient<IProductApi>()
     //.ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));                    
     //.ConfigureHttpClient(c => { c.BaseAddress = new Uri("https://localhost:7012/api/Product"); })
     .ConfigureHttpClient(c => c.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/Product"))
+    .AddHttpMessageHandler<LoggingHandler>()
     //.AddStandardResilienceHandler()
     .AddResilienceHandler("demo", builder =>
     {

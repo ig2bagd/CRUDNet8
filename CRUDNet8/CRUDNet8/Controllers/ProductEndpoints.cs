@@ -7,6 +7,8 @@ namespace CRUDNet8.Controllers;
 // https://www.youtube.com/watch?v=EXqM-9nMIrk
 public static class ProductEndpoints
 {
+    //public static WebApplication MapPageRoutes(this WebApplication app) { }       -- Another method
+
     //public static IEndpointConventionBuilder MapProductEndpoints(this IEndpointRouteBuilder app)
     public static void MapProductEndpoints(this IEndpointRouteBuilder app)
     {
