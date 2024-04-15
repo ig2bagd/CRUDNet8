@@ -1,4 +1,6 @@
-﻿using SharedLibrary.Models;
+﻿using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Mvc;
+using SharedLibrary.Models;
 using SharedLibrary.ProductRepositories;
 
 namespace CRUDNet8.Controllers;
@@ -51,10 +53,17 @@ public static class ProductEndpoints
         group.MapPost("Add-Product", AddProduct);
         group.MapPut("Update-Product", UpdateProduct);
         group.MapDelete("Delete-Product/{id}", DeleteProduct);
+
+        app.MapGet("/antiforgery", (HttpContext context, IAntiforgery antiforgery) =>
+        {
+            return antiforgery.GetAndStoreTokens(context);
+        });
     }
 
-    public static async Task<IResult> AllProducts(IProductRepository productRepository)
+    public static async Task<IResult> AllProducts(IProductRepository productRepository, [FromServices] ILogger logger)
     {
+        logger.LogInformation("Calling AllProducts");
+
         var products = await productRepository.GetAllProductsAsync();
         //return Results.Ok(products);
         return TypedResults.Ok(products);

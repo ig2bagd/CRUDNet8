@@ -4,9 +4,24 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Http.Resilience;
 using Polly;
 using Refit;
-using System;
+using Serilog;
+using Serilog.Core;
+using Serilog.Debugging;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
+#region Serilog
+SelfLog.Enable(m => Console.Error.WriteLine(m));
+
+var levelSwitch = new LoggingLevelSwitch();
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.ControlledBy(levelSwitch)
+    .Enrich.WithProperty("InstanceId", Guid.NewGuid().ToString("n"))
+    .WriteTo.BrowserHttp(endpointUrl: $"{builder.HostEnvironment.BaseAddress}ingest", controlLevelSwitch: levelSwitch)
+    .CreateLogger();
+
+builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
+#endregion
 
 builder.Services.AddScoped<IProductRepository, ProductService>();
 //builder.Services.AddScoped(http => new HttpClient

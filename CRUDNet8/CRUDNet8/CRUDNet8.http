@@ -1,0 +1,6 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+@API_URL=http://localhost:5046
+
+GET {{API_URL}}/antiforgery
+
+###

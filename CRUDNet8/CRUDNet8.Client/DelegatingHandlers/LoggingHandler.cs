@@ -1,4 +1,6 @@
-﻿namespace CRUDNet8.Client.DelegatingHandlers;
+﻿using Refit;
+
+namespace CRUDNet8.Client.DelegatingHandlers;
 
 //https://www.milanjovanovic.tech/blog/extending-httpclient-with-delegating-handlers-in-aspnetcore
 public class LoggingHandler : DelegatingHandler
@@ -25,6 +27,12 @@ public class LoggingHandler : DelegatingHandler
             logger.LogInformation("After HTTP request");
 
             return result;
+        }
+        catch (ApiException ex)
+        {
+            var errors = await ex.GetContentAsAsync<Dictionary<string, string>>();
+            var message = string.Join("; ", errors!.Values);
+            throw new Exception(message);
         }
         catch (Exception e)
         {

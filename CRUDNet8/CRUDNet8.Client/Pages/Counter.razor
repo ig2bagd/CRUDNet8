@@ -3,6 +3,8 @@
 @* @rendermode @(new InteractiveAutoRenderMode(false)) *@
 @* @rendermode InteractiveWebAssembly *@
 
+@inject ILogger<Counter> logger
+
 <PageTitle>Counter</PageTitle>
 
 <h1>Counter</h1>
@@ -18,5 +20,6 @@
     private void IncrementCount()
     {
         currentCount++;
+        logger.LogInformation($"currentCount: {currentCount}");
     }
 }

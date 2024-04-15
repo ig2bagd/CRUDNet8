@@ -4,10 +4,15 @@ using CRUDNet8.Controllers;
 using CRUDNet8.Data;
 using CRUDNet8.Implementations;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using SharedLibrary.Models;
 using SharedLibrary.ProductRepositories;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Serilog
+builder.Logging.ClearProviders();
+builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configuration));
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -18,6 +23,7 @@ builder.Services.AddRazorComponents()
 
 // https://stackoverflow.com/questions/71932980/what-is-addendpointsapiexplorer-in-asp-net-core-6/71933535#71933535
 // https://learn.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-swashbuckle?view=aspnetcore-8.0&tabs=visual-studio
+// https://www.youtube.com/watch?v=TlytBx3-k-k  -  How to use swagger in asp.net core web api
 builder.Services.AddEndpointsApiExplorer();     // Minimal APIs
 builder.Services.AddSwaggerGen();
 
@@ -57,6 +63,10 @@ app.UseHttpsRedirection();
 app.MapProductEndpoints();              //Minimal APIs
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+// Serilog
+app.UseSerilogIngestion();
+app.UseSerilogRequestLogging();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
