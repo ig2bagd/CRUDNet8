@@ -1,5 +1,7 @@
+using CRUDNet8.Client.Auth;
 using CRUDNet8.Client.DelegatingHandlers;
 using CRUDNet8.Client.Services;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Http.Resilience;
 using Polly;
@@ -22,6 +24,14 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
 #endregion
+
+/*
+Making an Authentication System in Blazor WebAssembly
+https://www.youtube.com/watch?v=WuKBx5YoIu0         https://github.com/gavilanch/Blazor-Wasm-CRUD
+https://learn.microsoft.com/en-us/aspnet/core/blazor/security/?view=aspnetcore-8.0#client-side-blazor-authentication
+*/
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<AuthenticationStateProvider, DummyAuthStateProvider>();
 
 builder.Services.AddScoped<IProductRepository, ProductService>();
 //builder.Services.AddScoped(http => new HttpClient
@@ -56,7 +66,7 @@ builder.Services
                 return default;
             }
         });
-    
+
         builder.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions
         {
             SamplingDuration = TimeSpan.FromSeconds(5),
@@ -64,7 +74,7 @@ builder.Services
             MinimumThroughput = 5,
             BreakDuration = TimeSpan.FromSeconds(5)
         });
-    
+
         builder.AddTimeout(TimeSpan.FromSeconds(1));
     });
 

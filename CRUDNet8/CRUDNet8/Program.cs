@@ -3,6 +3,7 @@ using CRUDNet8.Components;
 using CRUDNet8.Controllers;
 using CRUDNet8.Data;
 using CRUDNet8.Implementations;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using SharedLibrary.Models;
@@ -13,6 +14,21 @@ var builder = WebApplication.CreateBuilder(args);
 // Serilog
 builder.Logging.ClearProviders();
 builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configuration));
+
+// Blazor Authentication Tutorial - How to Authorize in Blazor	(Coding Droplets)
+// https://www.youtube.com/watch?v=GKvEuA80FAE	    
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = "auth_token";
+        options.LoginPath = "/login";
+        options.Cookie.MaxAge = TimeSpan.FromMinutes(30);
+        options.AccessDeniedPath = "/access-denied";
+    });
+builder.Services.AddAuthorization();
+
+// https://learn.microsoft.com/en-us/aspnet/core/blazor/security/?view=aspnetcore-8.0#troubleshoot-errors
+builder.Services.AddCascadingAuthenticationState();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -63,6 +79,8 @@ app.UseHttpsRedirection();
 app.MapProductEndpoints();              //Minimal APIs
 app.UseStaticFiles();
 app.UseAntiforgery();
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Serilog
 app.UseSerilogIngestion();
