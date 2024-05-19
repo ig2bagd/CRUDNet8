@@ -4,6 +4,8 @@ using CRUDNet8.Controllers;
 using CRUDNet8.Data;
 using CRUDNet8.Implementations;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using SharedLibrary.Models;
@@ -12,8 +14,14 @@ using SharedLibrary.ProductRepositories;
 var builder = WebApplication.CreateBuilder(args);
 
 // Serilog
-builder.Logging.ClearProviders();
+//builder.Logging.ClearProviders();
 builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configuration));
+//builder.Services.AddSingleton(Log.Logger);
+
+//builder.WebHost.GetSetting(WebHostDefaults.ServerUrlsKey);
+
+//builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();       // intended for use in server-side Blazor
+//builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
 
 // Blazor Authentication Tutorial - How to Authorize in Blazor	(Coding Droplets)
 // https://www.youtube.com/watch?v=GKvEuA80FAE	    
@@ -45,7 +53,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Wooo! Connection is not found"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection is not found"));
 });
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
@@ -78,10 +86,12 @@ app.UseHttpsRedirection();
 //app.MapControllers();                 //Only needed for API controllers
 app.MapProductEndpoints();              //Minimal APIs
 app.UseStaticFiles();
-app.UseAntiforgery();
-app.UseAuthentication();
-app.UseAuthorization();
 
+app.UseAuthentication();                // If app.UseAntiforgery() is used, no need to add app.UseAuthentication() & app.UseAuthorization() ???
+app.UseAuthorization();                 // https://www.youtube.com/watch?v=asa2ucbZlCI&t=160s
+
+app.UseAntiforgery();                   // A call to UseAntiforgery must be placed after calls to UseAuthentication and UseAuthorization. 
+                                        // https://learn.microsoft.com/en-us/aspnet/core/blazor/forms/?view=aspnetcore-8.0#antiforgery-support
 // Serilog
 app.UseSerilogIngestion();
 app.UseSerilogRequestLogging();

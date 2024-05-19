@@ -1,9 +1,18 @@
 ﻿@page "/counter"
-@rendermode InteractiveAuto
-@* @rendermode @(new InteractiveAutoRenderMode(false)) *@
+@using CRUDNet8.Client.Auth
+@using System.Security.Claims
+
+@* @rendermode InteractiveAuto *@
+@* @rendermode @(new InteractiveAutoRenderMode(prerender: false)) *@
 @* @rendermode InteractiveWebAssembly *@
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
 
 @inject ILogger<Counter> logger
+@* 
+(Cannot provide a value for property 'authStateProvider' on type 'CRUDNet8.Client.Pages.Counter'. There is no registered service of type 'CRUDNet8.Client.Auth.CustomAuthStateProvider'.)
+@inject CustomAuthStateProvider authStateProvider; 
+*@
 
 @*
 @attribute [Authorize]
@@ -16,13 +25,14 @@
 
 <h1 class="text-muted">Render @(OperatingSystem.IsBrowser() ? "Wasm" : "Server")</h1>
 <p role="status">Current count: @currentCount</p>
-
+@*
 <div>
     <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 </div>
-
-@* <AuthorizeView>
+*@
+<AuthorizeView>
     <Authorized>
+        <p>You are authorized @context.User.FindFirst(ClaimTypes.Name)!.Value !</p>
         <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
     </Authorized>
     <NotAuthorized>
@@ -31,8 +41,9 @@
     <Authorizing>
         Authorizing...
     </Authorizing>
-</AuthorizeView> *@
+</AuthorizeView>
 
+<br />
 <br />
 <input type="number" @bind-value="currentCount" @bind-value:event="oninput" />
 

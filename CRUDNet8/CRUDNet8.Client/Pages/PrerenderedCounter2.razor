@@ -19,19 +19,19 @@
 
     protected override void OnInitialized()
     {
-        persistingSubscription =
-            ApplicationState.RegisterOnPersisting(PersistCount);
+        persistingSubscription = ApplicationState.RegisterOnPersisting(PersistCount);
 
-        if (!ApplicationState.TryTakeFromJson<int>(
-            nameof(currentCount), out var restoredCount))
-        {
-            currentCount = Random.Shared.Next(100);
-            Logger.LogInformation("currentCount set to {Count}", currentCount);
-        }
-        else
+        if (ApplicationState.TryTakeFromJson(nameof(currentCount), out int restoredCount))
         {
             currentCount = restoredCount!;
             Logger.LogInformation("currentCount restored to {Count}", currentCount);
+            Serilog.Log.Information("Serilog: currentCount restored to {Count}", currentCount);
+        }
+        else
+        {
+            currentCount = Random.Shared.Next(100);
+            Logger.LogInformation("currentCount set to {Count}", currentCount);
+            Serilog.Log.Information("Serilog: currentCount set to {Count}", currentCount);
         }
     }
 
@@ -47,5 +47,6 @@
     private void IncrementCount()
     {
         currentCount++;
+        Serilog.Log.Information("Serilog: currentCount = {Count}", currentCount);
     }
 }

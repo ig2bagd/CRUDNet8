@@ -21,7 +21,7 @@ public class BasePage : ComponentBase, IDisposable
             return Task.CompletedTask;
         }));
 
-        if (ApplicationState.TryTakeFromJson<TResult?>(key, out var storedData))
+        if (ApplicationState.TryTakeFromJson(key, out TResult? storedData))
         {
             data = storedData;
         }

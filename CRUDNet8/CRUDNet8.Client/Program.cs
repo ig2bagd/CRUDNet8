@@ -3,6 +3,7 @@ using CRUDNet8.Client.DelegatingHandlers;
 using CRUDNet8.Client.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Http.Resilience;
 using Polly;
 using Refit;
@@ -30,8 +31,14 @@ Making an Authentication System in Blazor WebAssembly
 https://www.youtube.com/watch?v=WuKBx5YoIu0         https://github.com/gavilanch/Blazor-Wasm-CRUD
 https://learn.microsoft.com/en-us/aspnet/core/blazor/security/?view=aspnetcore-8.0#client-side-blazor-authentication
 */
+//builder.Services.AddOptions();
 builder.Services.AddAuthorizationCore();
-builder.Services.AddScoped<AuthenticationStateProvider, DummyAuthStateProvider>();
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+//builder.Services.AddScoped<CustomAuthStateProvider>();
+//builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<CustomAuthStateProvider>());
+
+builder.Services.AddScoped<BrowserStorageService>();
 
 builder.Services.AddScoped<IProductRepository, ProductService>();
 //builder.Services.AddScoped(http => new HttpClient
@@ -78,5 +85,6 @@ builder.Services
         builder.AddTimeout(TimeSpan.FromSeconds(1));
     });
 
+builder.Services.AddScoped<SessionStorage>();
 
 await builder.Build().RunAsync();

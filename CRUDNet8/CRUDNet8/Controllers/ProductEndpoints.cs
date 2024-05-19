@@ -60,34 +60,45 @@ public static class ProductEndpoints
         });
     }
 
-    public static async Task<IResult> AllProducts(IProductRepository productRepository, [FromServices] ILogger logger)
+    //public static async Task<IResult> AllProducts(IProductRepository productRepository, [FromServices] ILogger<ApplicationLogger> logger)
+    public static async Task<IResult> AllProducts(IProductRepository productRepository, Serilog.ILogger logger)
     {
-        logger.LogInformation("Calling AllProducts");
+        //logger.LogInformation("Calling AllProducts");
+        //logger.Information("Calling AllProducts");
+        Serilog.Log.Information("Calling AllProducts");
 
         var products = await productRepository.GetAllProductsAsync();
         //return Results.Ok(products);
         return TypedResults.Ok(products);
     }
 
-    public static async Task<IResult> SingleProduct(int id, IProductRepository productRepository)
+    public static async Task<IResult> SingleProduct(int id, IProductRepository productRepository, Serilog.ILogger logger)
     {
+        logger.Information("Calling SingleProduct");
+
         var product = await productRepository.GetProductByIdAsync(id);
         return TypedResults.Ok(product);
     }
-    public static async Task<IResult> AddProduct(Product model, IProductRepository productRepository)
+    public static async Task<IResult> AddProduct(Product model, IProductRepository productRepository, Serilog.ILogger logger)
     {
+        logger.Information("Calling AddProduct");
+
         var product = await productRepository.AddProductAsync(model);
         return TypedResults.Ok(product);
     }
 
-    public static async Task<IResult> UpdateProduct(Product model, IProductRepository productRepository)
+    public static async Task<IResult> UpdateProduct(Product model, IProductRepository productRepository, Serilog.ILogger logger)
     {
+        logger.Information("Calling UpdateProduct");
+
         var product = await productRepository.UpdateProductAsync(model);
         return TypedResults.Ok(product);
     }
 
-    public static async Task<IResult> DeleteProduct(int id, IProductRepository productRepository)
+    public static async Task<IResult> DeleteProduct(int id, IProductRepository productRepository, Serilog.ILogger logger)
     {
+        logger.Information("Calling DeleteProduct");
+
         var product = await productRepository.DeleteProductAsync(id);
         return TypedResults.Ok(product);
     }
