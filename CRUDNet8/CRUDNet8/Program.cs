@@ -2,7 +2,11 @@ using CRUDNet8.Client.Pages;
 using CRUDNet8.Components;
 using CRUDNet8.Controllers;
 using CRUDNet8.Data;
+using CRUDNet8.Extensions;
 using CRUDNet8.Implementations;
+using CRUDNet8.Middleware;
+
+//using Hellang.Middleware.ProblemDetails;                  Doesn't worked: Remove Nuget package
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
@@ -10,6 +14,8 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using SharedLibrary.Models;
 using SharedLibrary.ProductRepositories;
+
+//using ProblemDetailsOptions = Hellang.Middleware.ProblemDetails.ProblemDetailsOptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,9 +69,23 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 //    BaseAddress = new Uri(builder.Configuration.GetSection("BaseAddress").Value!)
 //});
 
-builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandlers();
+
+// https://andrewlock.net/handling-web-api-exceptions-with-problemdetails-middleware/
+// https://github.com/khellang/Middleware/issues/191
+//builder.Services.AddProblemDetails(opts => 
+//{
+//    opts.IncludeExceptionDetails = (ctx, ex) =>
+//    {
+//        // Fetch services from HttpContext.RequestServices
+//        var env = ctx.RequestServices.GetRequiredService<IHostEnvironment>();
+//        return env.IsDevelopment() || env.IsStaging();
+//    };
+//});
 
 var app = builder.Build();
+
+//app.UseProblemDetails();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -77,10 +97,18 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    //app.UseExceptionHandler("/Error", createScopeForErrors: true);
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.UseStatusCodePages();
+app.UseExceptionHandler();
+//app.UseExceptionHandler(new ExceptionHandlerOptions()
+//{
+//    AllowStatusCode404Response = true,
+//    ExceptionHandlingPath = "/Home/WRONG_URL"
+//});
 
 app.UseHttpsRedirection();
 //app.MapControllers();                 //Only needed for API controllers

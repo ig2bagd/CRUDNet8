@@ -12,6 +12,7 @@ public static class ProductEndpoints
     //public static WebApplication MapPageRoutes(this WebApplication app) { }       -- Another method
 
     //public static IEndpointConventionBuilder MapProductEndpoints(this IEndpointRouteBuilder app)
+    //public static IEndpointRouteBuilder MapProductEndpoints(this IEndpointRouteBuilder app)
     public static void MapProductEndpoints(this IEndpointRouteBuilder app)
     {
         /*
