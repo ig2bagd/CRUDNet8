@@ -47,10 +47,17 @@
 <br />
 <input type="number" @bind-value="currentCount" @bind-value:event="oninput" />
 
+<br />
+<br />
+<TelerikContainer>
+    <TelerikDatePicker @bind-Value="@DatePickerValue" Width="200px" />
+</TelerikContainer>
+
 @code {
     [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
 
     private int currentCount = 0;
+    private DateTime DatePickerValue { get; set; } = DateTime.Today;
 
     private async Task IncrementCount()
     {
