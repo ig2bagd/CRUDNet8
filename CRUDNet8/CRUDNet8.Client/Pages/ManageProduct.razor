@@ -51,6 +51,7 @@
     private Product ReturnProduct = new();
     private async Task HandleSave()
     {
+        WriteLine($"ManageProduct - ProductModel.Id = {ProductModel.Id}");
         if (ProductModel.Id > 0)
         {
             ReturnProduct = await ProductRepo.UpdateProductAsync(ProductModel);

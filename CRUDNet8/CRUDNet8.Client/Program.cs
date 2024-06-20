@@ -50,40 +50,45 @@ builder.Services.AddScoped<IProductRepository, ProductService>();
 
 builder.Services.AddTransient<LoggingHandler>();
 
+// https://blog.nimblepros.com/blogs/getting-started-with-refit/
 builder.Services
     .AddRefitClient<IProductApi>()
     //.ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));                    
     //.ConfigureHttpClient(c => { c.BaseAddress = new Uri("https://localhost:7012/api/Product"); })
-    .ConfigureHttpClient(c => c.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/Product"))
-    .AddHttpMessageHandler<LoggingHandler>()
+    //.ConfigureHttpClient(c => c.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/Product"))
+    .ConfigureHttpClient(c => { 
+        c.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/Product");
+        c.Timeout = TimeSpan.FromSeconds(15);
+    })
+    .AddHttpMessageHandler<LoggingHandler>();
     //.AddStandardResilienceHandler()
-    .AddResilienceHandler("demo", builder =>
-    {
-        builder.AddConcurrencyLimiter(100);
-        builder.AddTimeout(TimeSpan.FromSeconds(5));			// Order is important!  Notice similar AddTimeout at bottom
-        builder.AddRetry(new HttpRetryStrategyOptions
-        {
-            MaxRetryAttempts = 5,
-            BackoffType = DelayBackoffType.Exponential,
-            UseJitter = true,
-            Delay = TimeSpan.Zero,
-            OnRetry = static args =>
-            {
-                Console.WriteLine($"    Retry {args.AttemptNumber} after {args.RetryDelay.TotalMilliseconds:F2}ms, due to: {args.Outcome.Result?.StatusCode.ToString() ?? args.Outcome.Exception?.GetType().Name}");
-                return default;
-            }
-        });
+    //.AddResilienceHandler("demo", builder =>
+    //{
+    //    builder.AddConcurrencyLimiter(100);
+    //    builder.AddTimeout(TimeSpan.FromSeconds(5));			// Order is important!  Notice similar AddTimeout at bottom
+    //    builder.AddRetry(new HttpRetryStrategyOptions
+    //    {
+    //        MaxRetryAttempts = 5,
+    //        BackoffType = DelayBackoffType.Exponential,
+    //        UseJitter = true,
+    //        Delay = TimeSpan.Zero,
+    //        OnRetry = static args =>
+    //        {
+    //            Console.WriteLine($"    Retry {args.AttemptNumber} after {args.RetryDelay.TotalMilliseconds:F2}ms, due to: {args.Outcome.Result?.StatusCode.ToString() ?? args.Outcome.Exception?.GetType().Name}");
+    //            return default;
+    //        }
+    //    });
 
-        builder.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions
-        {
-            SamplingDuration = TimeSpan.FromSeconds(5),
-            FailureRatio = 0.9,
-            MinimumThroughput = 5,
-            BreakDuration = TimeSpan.FromSeconds(5)
-        });
+    //    builder.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions
+    //    {
+    //        SamplingDuration = TimeSpan.FromSeconds(5),
+    //        FailureRatio = 0.9,
+    //        MinimumThroughput = 5,
+    //        BreakDuration = TimeSpan.FromSeconds(5)
+    //    });
 
-        builder.AddTimeout(TimeSpan.FromSeconds(1));
-    });
+    //    builder.AddTimeout(TimeSpan.FromSeconds(30));
+    //});
 
 builder.Services.AddScoped<SessionStorage>();
 

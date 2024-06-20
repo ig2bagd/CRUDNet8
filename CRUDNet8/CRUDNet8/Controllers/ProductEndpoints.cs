@@ -65,8 +65,8 @@ public static class ProductEndpoints
     public static async Task<IResult> AllProducts(IProductRepository productRepository, Serilog.ILogger logger)
     {
         //logger.LogInformation("Calling AllProducts");
-        //logger.Information("Calling AllProducts");
-        Serilog.Log.Information("Calling AllProducts");
+        logger.Information("Calling AllProducts");
+        //Serilog.Log.Information("Calling AllProducts");
 
         var products = await productRepository.GetAllProductsAsync();
         //return Results.Ok(products);

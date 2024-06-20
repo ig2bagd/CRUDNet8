@@ -1,7 +1,5 @@
 ﻿using CRUDNet8.Data;
 using Microsoft.EntityFrameworkCore;
-using SharedLibrary.Models;
-using SharedLibrary.ProductRepositories;
 
 namespace CRUDNet8.Implementations
 {
@@ -13,6 +11,7 @@ namespace CRUDNet8.Implementations
         //    this.appDbContext = appDbContext;
         //}
 
+        // https://code-maze.com/efcore-modifying-data/
         public async Task<Product> AddProductAsync(Product model)
         {
             if (model is null) return null!;
@@ -28,8 +27,11 @@ namespace CRUDNet8.Implementations
         {
             var product = await appDbContext.Products.FirstOrDefaultAsync(_ => _.Id == model.Id);
             if (product is null) return null!;
-            product.Name = model.Name;
-            product.Quantity = model.Quantity;
+            //product.Name = model.Name;
+            //product.Quantity = model.Quantity;
+            //appDbContext.Update(product);           // Force updating all properties of the entity into database
+            // https://stackoverflow.com/questions/73714355/bettercleaner-way-to-update-record-using-entity-framework-core
+            appDbContext.Entry(product).CurrentValues.SetValues(model);
             await appDbContext.SaveChangesAsync();
             return await appDbContext.Products.FirstOrDefaultAsync(_ => _.Id == model.Id) ?? new Product();
         }

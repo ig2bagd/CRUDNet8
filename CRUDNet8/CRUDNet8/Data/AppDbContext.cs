@@ -7,8 +7,8 @@ namespace CRUDNet8.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            ChangeTracker.LazyLoadingEnabled = false;
+            //ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            //ChangeTracker.LazyLoadingEnabled = false;
         }
 
         public DbSet<Product>  Products { get; set; }
