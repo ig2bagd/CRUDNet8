@@ -7,13 +7,13 @@ namespace CRUDNet8.Controllers;
 
 // https://www.youtube.com/watch?v=gsAuFIhXz3g
 // https://www.youtube.com/watch?v=EXqM-9nMIrk
-public static class ProductEndpoints
+public static class ProductApiExtensions
 {
     //public static WebApplication MapPageRoutes(this WebApplication app) { }       -- Another method
 
     //public static IEndpointConventionBuilder MapProductEndpoints(this IEndpointRouteBuilder app)
     //public static IEndpointRouteBuilder MapProductEndpoints(this IEndpointRouteBuilder app)
-    public static void MapProductEndpoints(this IEndpointRouteBuilder app)
+    public static void MapProductApi(this IEndpointRouteBuilder app)
     {
         /*
         app.MapGet("/api/product/All-Products", async (IProductRepository productRepository) =>

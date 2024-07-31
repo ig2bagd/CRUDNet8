@@ -112,7 +112,7 @@ app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 //app.MapControllers();                 //Only needed for API controllers
-app.MapProductEndpoints();              //Minimal APIs
+app.MapProductApi();                    //Minimal APIs
 app.UseStaticFiles();
 
 app.UseAuthentication();                // If app.UseAntiforgery() is used, no need to add app.UseAuthentication() & app.UseAuthorization() ???

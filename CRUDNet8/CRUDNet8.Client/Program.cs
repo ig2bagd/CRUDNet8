@@ -51,6 +51,7 @@ builder.Services.AddScoped<IProductRepository, ProductService>();
 builder.Services.AddTransient<LoggingHandler>();
 
 // https://blog.nimblepros.com/blogs/getting-started-with-refit/
+// https://devblogs.microsoft.com/dotnet/building-resilient-cloud-services-with-dotnet-8/
 builder.Services
     .AddRefitClient<IProductApi>()
     //.ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));                    
