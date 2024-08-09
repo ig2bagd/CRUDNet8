@@ -10,6 +10,7 @@ using Refit;
 using Serilog;
 using Serilog.Core;
 using Serilog.Debugging;
+using Serilog.Extensions.Logging;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -23,7 +24,10 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.BrowserHttp(endpointUrl: $"{builder.HostEnvironment.BaseAddress}ingest", controlLevelSwitch: levelSwitch)
     .CreateLogger();
 
-builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
+//builder.Logging.AddSerilog();
+builder.Logging.AddProvider(new SerilogLoggerProvider());
+// https://github.com/serilog/serilog-extensions-logging
+//builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
 #endregion
 
 /*

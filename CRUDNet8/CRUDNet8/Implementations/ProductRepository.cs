@@ -3,13 +3,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CRUDNet8.Implementations
 {
-    public class ProductRepository(AppDbContext appDbContext) : IProductRepository
+    //public class ProductRepository(AppDbContext appDbContext) : IProductRepository
+    public class ProductRepository : IProductRepository, IDisposable
     {
         //private readonly AppDbContext appDbContext;
         //public ProductRepository(AppDbContext appDbContext)
         //{
         //    this.appDbContext = appDbContext;
         //}
+
+        private readonly AppDbContext appDbContext;
+        public ProductRepository(IDbContextFactory<AppDbContext> DbFactory)
+        {
+            appDbContext = DbFactory.CreateDbContext();
+        }
+
+        public void Dispose()
+        {
+            appDbContext.Dispose();
+        }
 
         // https://code-maze.com/efcore-modifying-data/
         public async Task<Product> AddProductAsync(Product model)

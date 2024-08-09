@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using SharedLibrary.Models;
 using SharedLibrary.ProductRepositories;
+using System.Text.RegularExpressions;
 
 //using ProblemDetailsOptions = Hellang.Middleware.ProblemDetails.ProblemDetailsOptions;
 
@@ -57,10 +58,27 @@ builder.Services.AddRazorComponents()
 builder.Services.AddEndpointsApiExplorer();     // Minimal APIs
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection is not found"));
-});
+// https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/#using-a-dbcontext-factory-eg-for-blazor
+// https://learn.microsoft.com/en-us/aspnet/core/blazor/blazor-ef-core?view=aspnetcore-8.0
+// https://stackoverflow.com/questions/73710513/what-is-the-difference-between-adddbcontextpool-and-adddbcontextfactory
+// AddDbContextFactory gives you the ability to create and manage DbContext instances yourself
+// https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/#other-dbcontext-configuration ***
+//builder.Services.AddDbContext<AppDbContext>(options =>
+#if DEBUG
+    builder.Services.AddDbContextFactory<AppDbContext>(options =>
+    {
+        options
+            .EnableDetailedErrors()
+            .EnableSensitiveDataLogging()
+            .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection is not found"));
+    });
+#else
+    builder.Services.AddDbContextFactory<AppDbContext>(options =>
+    {
+        options
+            .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection is not found"));
+    });
+#endif
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 // Not using & no need to register HttpClient on the server

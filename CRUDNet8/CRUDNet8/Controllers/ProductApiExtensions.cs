@@ -49,7 +49,7 @@ public static class ProductApiExtensions
         */
 
         var group = app.MapGroup("api/product");
-        group.MapGet("All-Products", AllProducts);
+        group.MapGet("All-Products", AllProducts);                  // group.MapGet("All-Products", AllProducts).WithName("GetWeatherForecast");
         group.MapGet("Single-Product/{id}", SingleProduct);
         group.MapPost("Add-Product", AddProduct);
         group.MapPut("Update-Product", UpdateProduct);
