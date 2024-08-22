@@ -138,6 +138,9 @@ app.UseAuthorization();                 // https://www.youtube.com/watch?v=asa2u
 
 app.UseAntiforgery();                   // A call to UseAntiforgery must be placed after calls to UseAuthentication and UseAuthorization. 
                                         // https://learn.microsoft.com/en-us/aspnet/core/blazor/forms/?view=aspnetcore-8.0#antiforgery-support
+
+app.UseMiddleware<RequestLogContextMiddleware>();
+
 // Serilog
 app.UseSerilogIngestion();
 app.UseSerilogRequestLogging();
