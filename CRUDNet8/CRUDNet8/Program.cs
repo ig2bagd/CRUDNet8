@@ -53,11 +53,13 @@ builder.Services.AddRazorComponents()
 //builder.Services.AddControllers();            //Only needed for API controllers    
 
 // https://stackoverflow.com/questions/71932980/what-is-addendpointsapiexplorer-in-asp-net-core-6/71933535#71933535
+// https://code-maze.com/apsnetcore-webapi-addendpointsapiexplorer-method/
 // https://learn.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-swashbuckle?view=aspnetcore-8.0&tabs=visual-studio
 // https://www.youtube.com/watch?v=TlytBx3-k-k  -  How to use swagger in asp.net core web api
-builder.Services.AddEndpointsApiExplorer();     // Minimal APIs
+/*
+builder.Services.AddEndpointsApiExplorer();     // Required if using Minimal APIs with Swagger
 builder.Services.AddSwaggerGen();
-
+*/
 // https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/#using-a-dbcontext-factory-eg-for-blazor
 // https://learn.microsoft.com/en-us/aspnet/core/blazor/blazor-ef-core?view=aspnetcore-8.0
 // https://stackoverflow.com/questions/73710513/what-is-the-difference-between-adddbcontextpool-and-adddbcontextfactory
@@ -110,8 +112,8 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
     app.UseWebAssemblyDebugging();
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    //app.UseSwagger();
+    //app.UseSwaggerUI();
 }
 else
 {
@@ -143,7 +145,14 @@ app.UseMiddleware<RequestLogContextMiddleware>();
 
 // Serilog
 app.UseSerilogIngestion();
-app.UseSerilogRequestLogging();
+app.UseSerilogRequestLogging(options =>
+{
+    // Attach additional properties to the request completion event
+    options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
+    {
+        diagnosticContext.Set("UserName", Regex.Replace(httpContext?.User?.Identity?.Name ?? "Testing", ".*\\\\(.*)", "$1", RegexOptions.None));
+    };
+});
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
