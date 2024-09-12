@@ -97,4 +97,8 @@ builder.Services
 
 builder.Services.AddScoped<SessionStorage>();
 
+
+builder.Services.AddCascadingValue(sp => new Dalek { Units = 123 });
+builder.Services.AddCascadingValue("AlphaGroup", sp => new Dalek { Units = 456 });
+
 await builder.Build().RunAsync();

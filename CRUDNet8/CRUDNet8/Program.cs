@@ -103,6 +103,9 @@ builder.Services.AddExceptionHandlers();
 //    };
 //});
 
+builder.Services.AddCascadingValue(sp => new Dalek { Units = 123 });
+builder.Services.AddCascadingValue("AlphaGroup", sp => new Dalek { Units = 456 });
+
 var app = builder.Build();
 
 //app.UseProblemDetails();
@@ -110,7 +113,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();
+    // https://stackoverflow.com/questions/78219277/iexceptionhandler-in-asp-net-core-8-web-api-not-working
+    //app.UseDeveloperExceptionPage();
     app.UseWebAssemblyDebugging();
     //app.UseSwagger();
     //app.UseSwaggerUI();

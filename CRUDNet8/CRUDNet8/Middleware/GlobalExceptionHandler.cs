@@ -16,6 +16,8 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
     {
         var traceId = Activity.Current?.Id ?? httpContext.TraceIdentifier;
         logger.LogError($"An error occurred while processing your request: {exception.Message} on machine {Environment.MachineName}. TraceId: {traceId}");
+
+        logger.LogError(exception, "Exception occurred: {Message}", exception.Message);
         /*
                 var errorResponse = new ErrorResponse
                 {
@@ -72,7 +74,7 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
             //Status = (int)HttpStatusCode.InternalServerError,
             Status = httpContext.Response.StatusCode,
             Type = exception.GetType().Name,
-            Title = "An unexpected error occurred",
+            Title = "Server Error",
             Detail = exception.Message,
             Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}"
         }, cancellationToken);
