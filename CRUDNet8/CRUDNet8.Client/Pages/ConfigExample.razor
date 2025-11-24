@@ -1,0 +1,10 @@
+﻿@page "/config-example"
+
+@inject IConfiguration Configuration
+
+@* https://learn.microsoft.com/en-us/aspnet/core/blazor/fundamentals/configuration *@
+<PageTitle>Configuration</PageTitle>
+
+<h1 style="font-size:@Configuration["h1FontSize"]">
+    Configuration example (50px)
+</h1>

@@ -1,0 +1,27 @@
+﻿@page "/memory-config"
+
+@inject IConfiguration Configuration
+
+@* 
+    Not working
+    https://learn.microsoft.com/en-us/aspnet/core/blazor/fundamentals/configuration?view=aspnetcore-8.0#memory-configuration-source 
+*@
+<PageTitle>Memory Configuration</PageTitle>
+
+<h1>Memory Configuration Example</h1>
+
+<h2>General specifications</h2>
+
+<ul>
+    <li>Color: @Configuration["color"]</li>
+    <li>Type: @Configuration["type"]</li>
+</ul>
+
+<h2>Wheels</h2>
+
+<ul>
+    <li>Count: @Configuration["wheels:count"]</li>
+    <li>Brand: @Configuration["wheels:brand"]</li>
+    <li>Type: @Configuration["wheels:brand:type"]</li>
+    <li>Year: @Configuration["wheels:year"]</li>
+</ul>

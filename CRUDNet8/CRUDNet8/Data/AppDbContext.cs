@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SharedLibrary.Models;
 
 namespace CRUDNet8.Data
 {
@@ -10,6 +9,15 @@ namespace CRUDNet8.Data
             //ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             //ChangeTracker.LazyLoadingEnabled = false;
         }
+
+        /*
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder
+                .EnableSensitiveDataLogging()
+                .UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=Test;ConnectRetryCount=0");
+        }
+        */
 
         public DbSet<Product>  Products { get; set; }
     }

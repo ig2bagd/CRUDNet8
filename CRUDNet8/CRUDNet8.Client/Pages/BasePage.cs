@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using SharedLibrary.Models;
 
 namespace CRUDNet8.Client.Pages;
 

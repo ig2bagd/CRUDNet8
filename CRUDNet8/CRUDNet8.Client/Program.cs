@@ -3,6 +3,7 @@ using CRUDNet8.Client.DelegatingHandlers;
 using CRUDNet8.Client.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Http.Resilience;
 using Polly;
@@ -12,7 +13,41 @@ using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Extensions.Logging;
 
+
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
+#region Memory Configuration Source
+var vehicleData = new Dictionary<string, string?>()
+{
+    { "color", "blue" },
+    { "type", "car" },
+    { "wheels:count", "3" },
+    { "wheels:brand", "Blazin" },
+    { "wheels:brand:type", "rally" },
+    { "wheels:year", "2008" },
+};
+
+var memoryConfig = new MemoryConfigurationSource { InitialData = vehicleData };
+builder.Configuration.Add(memoryConfig);
+
+//var configuration = builder.Configuration;
+
+//// Retrieve values
+//var color = configuration["color"];
+//var type = configuration["type"];
+//var wheelsCount = configuration["wheels:count"];
+//var wheelsBrand = configuration["wheels:brand"];
+//var wheelsBrandType = configuration["wheels:brand:type"];
+//var wheelsYear = configuration["wheels:year"];
+
+//Console.WriteLine($"Color: {color}");
+//Console.WriteLine($"Type: {type}");
+//Console.WriteLine($"Wheels Count: {wheelsCount}");
+//Console.WriteLine($"Wheels Brand: {wheelsBrand}");
+//Console.WriteLine($"Wheels Brand Type: {wheelsBrandType}");
+//Console.WriteLine($"Wheels Year: {wheelsYear}");
+#endregion
+
 
 #region Serilog
 SelfLog.Enable(m => Console.Error.WriteLine(m));

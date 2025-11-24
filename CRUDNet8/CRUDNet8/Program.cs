@@ -1,4 +1,3 @@
-using CRUDNet8.Client.Pages;
 using CRUDNet8.Components;
 using CRUDNet8.Controllers;
 using CRUDNet8.Data;
@@ -8,12 +7,8 @@ using CRUDNet8.Middleware;
 
 //using Hellang.Middleware.ProblemDetails;                  Doesn't worked: Remove Nuget package
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Server;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using SharedLibrary.Models;
-using SharedLibrary.ProductRepositories;
 using System.Text.RegularExpressions;
 
 //using ProblemDetailsOptions = Hellang.Middleware.ProblemDetails.ProblemDetailsOptions;
@@ -60,25 +55,28 @@ builder.Services.AddRazorComponents()
 builder.Services.AddEndpointsApiExplorer();     // Required if using Minimal APIs with Swagger
 builder.Services.AddSwaggerGen();
 */
-// https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/#using-a-dbcontext-factory-eg-for-blazor
+// https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/#use-a-dbcontext-factory
 // https://learn.microsoft.com/en-us/aspnet/core/blazor/blazor-ef-core?view=aspnetcore-8.0
-// https://stackoverflow.com/questions/73710513/what-is-the-difference-between-adddbcontextpool-and-adddbcontextfactory
+// https://stackoverflow.com/questions/70247235/difference-between-adddbcontext-and-adddbcontextfactory 
 // AddDbContextFactory gives you the ability to create and manage DbContext instances yourself
+// So the burden shifts to the Repositories (and/or Services): they must manage the DbContext on a per-method basis.
 // https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/#other-dbcontext-configuration ***
 //builder.Services.AddDbContext<AppDbContext>(options =>
 #if DEBUG
-    builder.Services.AddDbContextFactory<AppDbContext>(options =>
-    {
-        options
-            .EnableDetailedErrors()
-            .EnableSensitiveDataLogging()
-            .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection is not found"));
-    });
+builder.Services.AddDbContextFactory<AppDbContext>(options =>
+{
+    options
+        .EnableDetailedErrors()
+        .EnableSensitiveDataLogging()
+        .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+        .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection is not found"));
+});
 #else
     builder.Services.AddDbContextFactory<AppDbContext>(options =>
     {
         options
-            .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection is not found"));
+            .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection is not found"))
+            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
     });
 #endif
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
